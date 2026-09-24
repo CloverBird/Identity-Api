@@ -1,0 +1,15 @@
+services:
+  database:
+    image: postgres:18.1
+    container_name: guildly_db_tm
+    ports:
+      - "5005:5432"
+    environment:
+      POSTGRES_DB: guildly_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - guildly_volume:/var/lib/postgresql
+      
+volumes:
+  guildly_volume:

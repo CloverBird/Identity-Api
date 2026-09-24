@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/k8s/" />
+  <Folder Name="/solution-items/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Guildly.Identity.Api/Guildly.Identity.Api.csproj" />
+    <Project Path="src/Guildly.Identity.Application/Guildly.Identity.Application.csproj" />
+    <Project Path="src/Guildly.Identity.Domain/Guildly.Identity.Domain.csproj" />
+    <Project Path="src/Guildly.Identity.Infrastructure/Guildly.Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Common/">
+    <Project Path="src/Common/Guildly.Common.Api/Guildly.Common.Api.csproj" />
+    <Project Path="src/Common/Guildly.Common.Application/Guildly.Common.Application.csproj" />
+    <Project Path="src/Common/Guildly.Common.Database/Guildly.Common.Database.csproj" />
+    <Project Path="src/Common/Guildly.Common.Domain/Guildly.Common.Domain.csproj" />
+    <Project Path="src/Common/Guildly.Common/Guildly.Common.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    
+  </Folder>
+</Solution>
