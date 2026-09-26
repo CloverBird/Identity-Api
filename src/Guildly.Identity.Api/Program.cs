@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Guildly.Common.Database.Configurations;
 using Guildly.Identity.Api.Configurations;
 using Guildly.Identity.Api.DocumentTransformers;
@@ -19,6 +20,11 @@ var jwtConfiguration = builder.Configuration.GetSection("Jwt").Get<JwtConfigurat
 builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection("Jwt"));
 
 builder.Services.AddOpenApi(options => options.AddDocumentTransformer<JwtBearerSecuritySchemeTransformer>());
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+       options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 
 builder.Services.AddApiServices()
        .AddApplicationServices()

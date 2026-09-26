@@ -5,11 +5,11 @@ services:
     ports:
       - "5005:5432"
     environment:
-      POSTGRES_DB: guildly_db
+      POSTGRES_DB: guildly_db_tm
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - guildly_volume:/var/lib/postgresql
+      - guildly_tm_volume:/var/lib/postgresql
       
 volumes:
-  guildly_volume:
+  guildly_tm_volume:
