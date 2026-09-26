@@ -1,0 +1,16 @@
+.git/
+.idea/
+.vs/
+.vscode/
+
+**/bin/
+**/obj/
+
+tests/
+k8s/
+
+*.user
+*.suo
+*.sln.DotSettings.user
+
+src/Guildly.Identity.Api/appsettings.local.json
