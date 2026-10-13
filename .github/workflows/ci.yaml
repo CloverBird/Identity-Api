@@ -1,0 +1,67 @@
+name: Guildly Identity CI
+
+on:
+  push:
+    branches: 
+    - main
+    - 'feature/**'
+    - 'bugfix/**'
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+  
+permissions:
+  contents: read
+  
+jobs:
+  build-and-test:
+    name: Build-And-Test
+    uses: CloverBird/ci-templates/.github/workflows/dotnet-build-and-test.yaml@main
+    with:
+      dotnet_version: '10.0.x'
+      build_configuration: 'Release'
+      solution: 'Guildly.Identity.slnx'
+      build_arguments: '--no-restore'
+      test_arguments: '--no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx'
+  
+  docker-pack-and-push:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    name: Docker-Pack-And-Push
+    uses: CloverBird/ci-templates/.github/workflows/docker-pack-and-push.yaml@main
+    with:
+      dockerhub_username: ${{ vars.DOCKERHUB_USERNAME }}
+      dockerhub_repository: ${{ vars.DOCKERHUB_REPOSITORY }}
+      image_tag: latest
+      path_to_dockerfile: src/Guildly.Identity.Api/Dockerfile
+      build_context: .  
+    secrets:
+      dockerhub_access_token: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+  pack-and-push-to-artifacts:
+    needs: build-and-test
+    if: github.ref != 'refs/heads/main'
+    name: Pack-And-Push-To-Artifacts
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4  
+        
+      - name: Build Docker image
+        uses: docker/build-push-action@v7
+        with:
+          file: src/Guildly.Identity.Api/Dockerfile
+          context: .
+          push: false
+          load: true
+          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:latest
+          
+      - name: Save Docker image
+        run: docker save ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.DOCKERHUB_REPOSITORY }}:latest -o ${{ vars.DOCKERHUB_REPOSITORY }}-image.tar
+
+      - name: Upload Docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ vars.DOCKERHUB_REPOSITORY }}-image
+          path: ${{ vars.DOCKERHUB_REPOSITORY }}-image.tar
