@@ -36,7 +36,7 @@ jobs:
       path_to_dockerfile: src/Guildly.Identity.Api/Dockerfile
       build_context: .  
     secrets:
-      dockerhub_access_token: ${{ secrets.DOCKERHUB_TOKEN }}
+      dockerhub_access_token: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
     
   pack-and-push-to-artifacts:
     needs: build-and-test
