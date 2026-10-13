@@ -57,7 +57,8 @@ stages:
               containerRegistry: $(dockerServiceConnection)
               repository: $(dockerRepository)
               command: build
-              Dockerfile: '**/Dockerfile'
+              Dockerfile: 'src/Guildly.Identity.Api/Dockerfile'
+              buildContext: '.'
               tags: |
                 latest
 
