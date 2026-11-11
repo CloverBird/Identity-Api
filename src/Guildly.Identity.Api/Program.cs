@@ -32,12 +32,19 @@ builder.Services.AddApiServices()
 
 builder.Services.AddAuth(jwtConfiguration!);
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+    policy.WithOrigins(allowedOrigins)
+          .WithMethods(HttpMethods.Get, HttpMethods.Post, HttpMethods.Delete)
+          .AllowAnyHeader()));
+
 var app = builder.Build();
 
 app.UseOpenApi(builder.Configuration.GetSection("OpenApi").Get<OpenApiConfiguration>()!);
 
 app.UseHttpsRedirection();
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
