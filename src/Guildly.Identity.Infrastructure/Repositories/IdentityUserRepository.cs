@@ -1,5 +1,6 @@
 ﻿using Guildly.Common.Database.Repository;
 using Guildly.Identity.Domain.Entities;
+using Guildly.Identity.Domain.Enums;
 using Guildly.Identity.Domain.Repositories;
 using Guildly.Identity.Domain.ValueObjects;
 using Guildly.Identity.Infrastructure.DbContexts;
@@ -42,5 +43,19 @@ internal class IdentityUserRepository : Repository<IdentityUser, IdentityDbConte
         return query.FirstOrDefaultAsync(
             u => u.Id == userId,
             cancellationToken);
+    }
+
+    public async Task<(IReadOnlyList<IdentityUser> Users, int TotalCount)> GetIdentityUsersAsync(
+        UserRole role, int skip, int take, CancellationToken cancellationToken = default)
+    {
+        var query = DbContext.IdentityUsers.AsNoTracking().Where(user => user.Role == role);
+        var totalCount = await query.CountAsync(cancellationToken);
+        var users = await query.OrderByDescending(user => user.CreatedAt)
+                               .ThenByDescending(user => user.Id)
+                               .Skip(skip)
+                               .Take(take)
+                               .ToListAsync(cancellationToken);
+
+        return (users, totalCount);
     }
 }

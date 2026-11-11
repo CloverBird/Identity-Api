@@ -42,5 +42,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapIdentityEndpoints();
+app.MapAdminUserEndpoints();
 
 app.Run();

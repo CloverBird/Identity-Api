@@ -31,7 +31,7 @@ internal static class IdentityEndpoints
              .MapConfirmPasswordReset()
              .MapChangePassword();
 
-        group.MapGetIdentityUser();
+        group.MapGetMeAsUser();
 
         group.MapLogin()
              .MapRotateToken()

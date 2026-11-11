@@ -1,7 +1,10 @@
-﻿namespace Guildly.Identity.Api.Responses;
+using Guildly.Identity.Domain.Enums;
+
+namespace Guildly.Identity.Api.Responses;
 
 public record GetIdentityUserResponse(
     Guid Id,
     string Email,
-    string? Phone,
-    DateTime CreatedAt);
+    UserStatus Status,
+    bool EmailConfirmed,
+    DateTimeOffset CreatedAt);
