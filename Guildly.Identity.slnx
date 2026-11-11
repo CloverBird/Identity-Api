@@ -6,6 +6,7 @@
   <Folder Name="/src/">
     <Project Path="src/Guildly.Identity.Api/Guildly.Identity.Api.csproj" />
     <Project Path="src/Guildly.Identity.Application/Guildly.Identity.Application.csproj" />
+    <Project Path="src/Guildly.Identity.Database.Migration.Job/Guildly.Identity.Database.Migration.Job.csproj" />
     <Project Path="src/Guildly.Identity.Domain/Guildly.Identity.Domain.csproj" />
     <Project Path="src/Guildly.Identity.Infrastructure/Guildly.Identity.Infrastructure.csproj" />
   </Folder>
