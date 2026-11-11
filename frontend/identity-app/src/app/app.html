@@ -1,0 +1,178 @@
+<header class="topbar">
+  <div class="shell wordmark"><strong>Guildly</strong><span>Identity</span></div>
+</header>
+
+<main class="shell">
+  <h1>Users</h1>
+
+  <div class="workspace">
+    <aside class="card create-card" aria-labelledby="create-heading">
+      <h2 id="create-heading">Add user</h2>
+      <form [formGroup]="createForm" (ngSubmit)="createUser()">
+        <fieldset [disabled]="busy()">
+          <label for="new-email">Email</label>
+          <input id="new-email" type="email" formControlName="email" autocomplete="email" />
+          @if (createForm.controls.email.touched && createForm.controls.email.invalid) {
+            <small class="field-error">Enter a valid email address.</small>
+          }
+
+          <label for="new-password">Password</label>
+          <input
+            id="new-password"
+            type="password"
+            formControlName="password"
+            autocomplete="new-password"
+            aria-describedby="password-hint"
+          />
+          <small
+            id="password-hint"
+            [class.field-error]="
+              createForm.controls.password.touched && createForm.controls.password.invalid
+            "
+          >
+            Use 8 to 128 characters.
+          </small>
+
+          @if (formError()) {
+            <p class="field-error" role="alert">{{ formError() }}</p>
+          }
+
+          <button class="button primary" type="submit">Add user</button>
+        </fieldset>
+      </form>
+    </aside>
+
+    <section class="card user-list" aria-label="User list" [attr.aria-busy]="loading()">
+      @if (listError()) {
+        <div class="error-banner" role="alert">
+          <span>{{ listError() }}</span>
+          <button class="button" type="button" [disabled]="busy()" (click)="loadUsers()">
+            Reload list
+          </button>
+        </div>
+      }
+
+      @if (usersPage(); as page) {
+        @if (page.items.length) {
+          <div class="table-scroll" tabindex="0" role="region" aria-label="Users table">
+            <table aria-label="Users">
+              <thead>
+                <tr>
+                  <th scope="col">Email</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Created</th>
+                  <th scope="col" class="actions-heading">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (user of page.items; track user.id) {
+                  <tr>
+                    <td>
+                      <button
+                        class="email-link"
+                        type="button"
+                        [disabled]="busy() || detailsLoading()"
+                        (click)="viewUser(user.id, detailsDialog)"
+                      >
+                        {{ user.email }}
+                      </button>
+                    </td>
+                    <td>
+                      <span class="status" [attr.data-status]="user.status">
+                        {{ statusLabels[user.status] }}
+                      </span>
+                    </td>
+                    <td class="date">{{ user.createdAt | date: 'mediumDate' }}</td>
+                    <td>
+                      <div class="row-actions">
+                        <button
+                          class="button"
+                          type="button"
+                          [disabled]="busy()"
+                          (click)="changeStatus(user)"
+                        >
+                          {{ user.status === 'Blocked' ? 'Unblock' : 'Block' }}
+                        </button>
+                        <button
+                          class="button danger"
+                          type="button"
+                          [disabled]="busy()"
+                          (click)="deleteUser(user)"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="empty" role="status">
+            {{ page.totalCount ? 'No users on this page.' : 'No users yet.' }}
+          </p>
+        }
+
+        @if (page.totalCount || page.page > 1) {
+          <footer class="table-footer">
+            <span>{{ page.totalCount }} {{ page.totalCount === 1 ? 'user' : 'users' }}</span>
+            @if (pageCount() > 1 || page.page > 1) {
+              <nav class="pagination" aria-label="User list pages">
+                <button
+                  class="button"
+                  type="button"
+                  [disabled]="busy() || page.page <= 1"
+                  (click)="loadUsers(page.page - 1)"
+                >
+                  Previous
+                </button>
+                <span>Page {{ page.page }} of {{ pageCount() }}</span>
+                <button
+                  class="button"
+                  type="button"
+                  [disabled]="busy() || page.page >= pageCount()"
+                  (click)="loadUsers(page.page + 1)"
+                >
+                  Next
+                </button>
+              </nav>
+            }
+          </footer>
+        }
+      } @else if (loading()) {
+        <p class="empty" role="status">Loading users…</p>
+      }
+    </section>
+  </div>
+</main>
+
+<dialog #detailsDialog class="details-dialog card" aria-labelledby="details-heading">
+  <div class="dialog-heading">
+    <h2 id="details-heading">User details</h2>
+    <button class="button" type="button" (click)="detailsDialog.close()">Close</button>
+  </div>
+
+  @if (detailsLoading()) {
+    <p role="status">Loading details…</p>
+  } @else if (detailsError()) {
+    <p class="field-error" role="alert">{{ detailsError() }}</p>
+  } @else if (details(); as user) {
+    <dl>
+      <dt>Email</dt>
+      <dd>{{ user.email }}</dd>
+      <dt>Status</dt>
+      <dd>
+        <span class="status" [attr.data-status]="user.status">{{ statusLabels[user.status] }}</span>
+      </dd>
+      <dt>Email confirmed</dt>
+      <dd>{{ user.emailConfirmed ? 'Yes' : 'No' }}</dd>
+      <dt>Created</dt>
+      <dd>{{ user.createdAt | date: 'medium' }}</dd>
+      <dt>User ID</dt>
+      <dd>
+        <code>{{ user.id }}</code>
+      </dd>
+    </dl>
+  }
+</dialog>
