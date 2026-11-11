@@ -1,5 +1,6 @@
 ﻿using Guildly.Common.Domain;
 using Guildly.Identity.Domain.Entities;
+using Guildly.Identity.Domain.Enums;
 using Guildly.Identity.Domain.ValueObjects;
 
 namespace Guildly.Identity.Domain.Repositories;
@@ -13,4 +14,7 @@ public interface IIdentityUserRepository : IRepository<IdentityUser>
     Task<IdentityUser?> GetUserByEmailAsync(Email email, bool asNoTracking = false, CancellationToken cancellationToken = default);
     
     Task<IdentityUser?> GetUserByIdAsync(Guid userId, bool asNoTracking = false, CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<IdentityUser> Users, int TotalCount)> GetIdentityUsersAsync(
+        UserRole role, int skip, int take, CancellationToken cancellationToken = default);
 }

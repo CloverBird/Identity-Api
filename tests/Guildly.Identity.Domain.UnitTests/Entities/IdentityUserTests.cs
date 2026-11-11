@@ -95,6 +95,20 @@ public class IdentityUserTests
         Assert.Equal(UserStatus.Blocked, user.Status);
     }
     
+    [Theory]
+    [InlineData(true, UserStatus.Active)]
+    [InlineData(false, UserStatus.PendingRegistration)]
+    public void Unblock_Should_RestoreStatusBasedOnEmailConfirmation(bool confirmed, UserStatus expectedStatus)
+    {
+        var user = CreateUser(active: confirmed);
+        user.Block();
+
+        user.Unblock();
+
+        Assert.Equal(expectedStatus, user.Status);
+        Assert.Equal(confirmed, user.EmailConfirmed);
+    }
+
     [Fact]
     public void Block_Should_SetStatusToBlocked()
     {

@@ -90,6 +90,14 @@ public class IdentityUser
         Status = UserStatus.Blocked;
     }
 
+    public void Unblock()
+    {
+        if (Status == UserStatus.Blocked)
+        {
+            Status = EmailConfirmed ? UserStatus.Active : UserStatus.PendingRegistration;
+        }
+    }
+
     public Result ConfirmPhone()
     {
         if (Status == UserStatus.Blocked)

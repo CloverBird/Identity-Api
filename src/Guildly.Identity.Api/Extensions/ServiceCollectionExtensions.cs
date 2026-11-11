@@ -6,6 +6,7 @@ using Guildly.Identity.Api.Requests;
 using Guildly.Identity.Api.Validators;
 using Guildly.Identity.Application.Configurations;
 using Guildly.Identity.Application.Extensions;
+using Guildly.Identity.Domain.Enums;
 using Guildly.Identity.Infrastructure.Configurations;
 using Guildly.Identity.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,6 +18,8 @@ namespace Guildly.Identity.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    internal const string AdminOnlyPolicy = "AdminOnly";
+
     public static IServiceCollection AddApiServices(this IServiceCollection services)
     {
         services.AddTransient<IValidator<RegisterUserRequest>, RegisterUserRequestValidator>();
@@ -35,6 +38,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IValidator<ConfirmPasswordResetRequest>, ConfirmPasswordResetRequestValidator>();
         
         services.AddTransient<IValidator<LoginUserRequest>, LoginUserRequestValidator>();
+        services.AddTransient<IValidator<CreateIdentityUserRequest>, CreateIdentityUserRequestValidator>();
         
         return services;
     }
@@ -62,7 +66,8 @@ public static class ServiceCollectionExtensions
                 };
             });
 
-        services.AddAuthorization(); // TODO: setup policies/roles/requirements
+        services.AddAuthorization(options => options.AddPolicy(AdminOnlyPolicy, policy =>
+            policy.RequireAuthenticatedUser().RequireRole(nameof(UserRole.Admin))));
         
         return services;
     }
