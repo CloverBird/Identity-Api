@@ -1,0 +1,6 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.database.storageClass.name }}
+provisioner: {{ .Values.database.storageClass.provisioner }}
+volumeBindingMode: Immediate

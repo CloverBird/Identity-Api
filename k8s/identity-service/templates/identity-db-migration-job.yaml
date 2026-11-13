@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.database.migration.jobName }}-{{ .Chart.Version | replace "." "" }}
+spec:
+  backoffLimit: 0
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.database.migration.jobName }}-{{ .Chart.Version | replace "." "" }}
+    spec:
+      containers:
+        - name: {{ .Values.database.migration.jobName }}
+          image: "{{ .Values.database.migration.image.repository }}:{{ .Values.database.migration.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: {{ .Values.database.secret.dotnet.name }}
+      restartPolicy: Never
