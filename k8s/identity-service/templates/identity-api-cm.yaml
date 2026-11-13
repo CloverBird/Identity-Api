@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.api.configMap.name }}
+data:
+  Jwt__Issuer: guildly-identity
+  Jwt__Audience: guildly-api
+  Jwt__AccessTokenLifetimeInMinutes: "60"
+  RefreshToken__RefreshTokenLifeTime: "1"
+  RefreshToken__RememberMeRefreshTokenLifeTime: "7"
+  RefreshToken__Length: "32"
+  OpenApi__EnableScalar: "true"
+  VerificationSession__AllowedAttempts: "5"
+  VerificationSession__ExpirationTimeInMinutes: "20"

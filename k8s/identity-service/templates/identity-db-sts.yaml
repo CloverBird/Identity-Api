@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.database.statefulSet.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.database.name }}
+  serviceName: {{ .Values.database.headlessService.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.database.name }}
+    spec:
+      containers:
+        - name: {{ .Values.database.name }}
+          image: "{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}"
+          imagePullPolicy: {{ .Values.database.image.pullPolicy }}
+          ports:
+            - name: postgres
+              containerPort: {{ .Values.database.containerPort }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.database.secret.name }}
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.database.persistentVolumeClaim.name }}

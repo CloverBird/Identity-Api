@@ -1,0 +1,78 @@
+namespace: identity-ns
+
+api:
+  name: identity-api
+  replicas: 1
+
+  image:
+    repository: yehembarsenii/identity-api
+    tag: "latest"
+    pullPolicy: IfNotPresent
+    secretName: identity-api-docker-registry-secret
+    
+  containerPort: 8080
+
+  service:
+    name: identity-api-svc
+    port: 8080
+
+  configMap:
+    name: identity-api-cm
+
+  secretName: identity-api-secrets
+
+database:
+  name: guildly-identity-db
+  username: postgres
+  containerPort: 5432
+
+  image:
+    repository: postgres
+    tag: "18.1"
+    pullPolicy: IfNotPresent
+
+  storageClass:
+    name: identity-db-stc
+    provisioner: kubernetes.io/no-provisioner
+
+  persistentVolume:
+    name: identity-db-pv
+
+  persistentVolumeClaim:
+    name: identity-db-pvc
+
+  headlessService:
+    name: identity-db-svc
+
+  statefulSet:
+    name: identity-db-sts
+
+  secret:
+    name: identity-db-secrets
+    dotnet:
+      name: identity-db-dotnet-secrets
+    
+  migration:
+    jobName: identity-migration-job
+    image:
+      repository: yehembarsenii/identity-migration-job
+      tag: "latest"
+      
+frontend:
+  name: identity-app
+  replicas: 1
+  containerPort: 80
+
+  image:
+    repository: yehembarsenii/identity-app
+    tag: "latest"
+    pullPolicy: IfNotPresent
+
+  service:
+    name: identity-app-svc
+    port: 80
+
+ingress:
+  name: identity-ingress
+  className: nginx
+  host: identity.app.lab
