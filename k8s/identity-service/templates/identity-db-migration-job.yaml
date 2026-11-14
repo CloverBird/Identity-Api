@@ -12,7 +12,7 @@ spec:
       containers:
         - name: {{ .Values.database.migration.jobName }}
           image: "{{ .Values.database.migration.image.repository }}:{{ .Values.database.migration.image.tag }}"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.database.migration.image.pullPolicy }}
           envFrom:
             - secretRef:
                 name: {{ .Values.database.secret.dotnet.name }}

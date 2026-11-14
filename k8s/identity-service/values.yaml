@@ -57,6 +57,7 @@ database:
     image:
       repository: yehembarsenii/identity-migration-job
       tag: "latest"
+      pullPolicy: IfNotPresent
       
 frontend:
   name: identity-app
